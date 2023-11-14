@@ -1,11 +1,55 @@
-import React from 'react';
-import DraggableWidget from './components/DraggableWidget';
-import DroppableWidget from './components/DroppableWidget';
+import React, { useState } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import './App.css';
-import Swal from 'sweetalert2'
+
+const DraggableWidget = ({ type, onDrop }) => {
+  const [{ isDragging }, drag] = useDrag({
+    type: 'draggable-widget',
+    item: { type },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  });
+
+  return (
+    <div
+      ref={drag}
+      className={`draggable-widget ${isDragging ? 'dragging' : ''}`}
+      onClick={() => onDrop(type)}
+    >
+      {type}
+    </div>
+  );
+};
+
+const DroppableWidget = ({ onDrop, items }) => {
+  const [, drop] = useDrop({
+    accept: 'draggable-widget',
+    drop: (item) => onDrop(item.type),
+  });
+
+  return (
+    <div
+      ref={drop}
+      className="droppable-widget"
+      style={{
+        padding: '8px',
+        margin: '4px',
+        border: '1px dashed #ddd',
+      }}
+    >
+      {items.map((item, index) => (
+        <div key={index} onClick={() => onDrop(item.type)}>
+          {item.type}
+        </div>
+      ))}
+      Drop Here
+    </div>
+  );
+};
 
 
 const App = () => {
@@ -27,35 +71,41 @@ const App = () => {
         newWidget = {
           widget: selectedWidget,
           text: buttonText,
-          borderRadius: buttonRadius,
+          'border-radius': buttonRadius,
         };
       } else if (selectedWidget === 'textbox') {
         newWidget = {
           widget: selectedWidget,
           text: widgetText,
         };
+      } else {
+        // Assuming the widgets array contains both 'button' and 'textbox'
+        newWidget = widgets.map((widget) => {
+          if (widget.type === 'button') {
+            return {
+              widget: widget.type,
+              text: buttonText,
+              'border-radius': buttonRadius,
+            };
+          } else if (widget.type === 'textbox') {
+            return {
+              widget: widget.type,
+              text: widgetText,
+            };
+          }
+          return null;
+        });
       }
   
       await axios.post('http://localhost:5000/api/widgets', newWidget);
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Widget data saved successfully!',
-        showConfirmButton: true,
-        timer: 1500,
-      });
+      alert('Widget data saved successfully!');
     } catch (error) {
       console.error('Error saving widget data:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong!',
-        footer: '<a href="#">Error saving widget data. Please try again.</a>',
-      });
+      alert('Error saving widget data. Please try again.');
     }
   };
   
-    const handleClear = () => {
+  const handleClear = () => {
     setWidgets([]);
     setSelectedWidget(null);
     setWidgetText('');
@@ -67,7 +117,7 @@ const App = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="app">
         <div className="left-section">
-          <h2>Left Section <br/> <small> (Widgets) </small></h2>
+          <h2>Left Section</h2>
           <DraggableWidget type="textbox" onDrop={handleDrop} />
           <DraggableWidget type="button" onDrop={handleDrop} />
         </div>
@@ -109,7 +159,7 @@ const App = () => {
               )}
               <br />
               <button onClick={handleSave}>Save</button>
-              <button onClick={handleClear}>Reset Default</button>
+              <button onClick={handleClear}>Clear</button>
             </div>
           )}
         </div>

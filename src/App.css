@@ -1,38 +1,78 @@
-.App {
+.app {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+  background-color: #efe9e0;
+}
+
+h2 {
+  color: #ff5722;
+  font-size: 1.1rem
+}
+
+.left-section,
+.middle-section,
+.right-section {
+  padding: 20px;
+  border: 1px solid #ccc;
+  margin: 10px;
+  background-color: #fff;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.middle-section {
+  min-height: 300px;
+  flex: 1;
+  overflow: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.draggable-widget {
+  cursor: move;
+  padding: 8px;
+  margin: 4px;
+  border: 1px solid #ddd;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.draggable-widget:hover {
+  background-color: #d0d0d0;
+}
+
+.droppable-widget {
+  height: 70vh;
+  padding: 8px;
+  margin: 4px;
+  border: 1px dashed #ddd;
+  text-align: center;
+}
+
+.droppable-widget.hover {
+  background-color: #f0f8ff;
+}
+
+.right-section h2 {
+  margin-bottom: 10px;
+}
+
+.right-section label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.right-section input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.right-section button {
+  padding: 8px 16px;
+  margin: 1rem 0.5rem;
+  background-color: #4caf50;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.right-section button:hover {
+  background-color: #45a049;
 }
